@@ -14,6 +14,8 @@ model Admin{
   id Int @id @default(autoincrement())
   username String
   password String
+  profilePict String?
+  session Session?
 }
 
 model Anggota{
@@ -21,14 +23,65 @@ model Anggota{
   username String
   nickname String?
   password String
+  profilePict String?
+  satker Satker @relation(references: nama, fields: [satkerId])
+  satkerId String
   absensi Absen[]
 }
 
 model Absen{
   id Int @id @default(autoincrement())
-  waktu DateTime
-  tipe String
-  user Anggota @relation(references: id, fields: [userId])
-  userId Int
+  tanggal DateTime
+  anggota Anggota @relation(references: id, fields: [anggotaId])
+  anggotaId Int
+  ket String?
+  absenMasuk AbsenMasuk?
+  absenPulang AbsenPulang?
+  attachments Attachment[]
+  note Note @relation(references: nama, fields: [noteId])
+  noteId String
+}
+
+model Note {
+  nama String @id
+  absen Absen[]
+}
+
+model Satker{
+  nama String @id
+  anggota Anggota[]
+}
+
+model AbsenMasuk{
+  id Int @id @default(autoincrement())
+  time DateTime
+  latitude String
+  longitude String
   foto String
+  absen Absen @relation(references: id, fields: [absenId])
+  absenId Int @unique
+}
+
+model AbsenPulang{
+  id Int @id @default(autoincrement())
+  time DateTime
+  latitude String
+  longitude String
+  foto String
+  absen Absen @relation(references: id, fields: [absenId])
+  absenId Int @unique
+}
+
+model Attachment {
+  id Int @id @default(autoincrement())
+  url String
+  name String
+  absen Absen @relation(references: id, fields: [absenId])
+  absenId Int
+}
+
+model Session{
+  id String @id @default(uuid())
+  admin Admin @relation(references: id, fields: [adminId])
+  adminId Int @unique
 }
